@@ -1,4 +1,3 @@
-// Seleccionamos los elementos del DOM
 const productForm = document.getElementById('product-form');
 const productList = document.getElementById('product-list');
 
@@ -35,6 +34,8 @@ function renderProducts() {
             <td>${product.minStock}</td>
             <td>${isCritico ? '⚠️ Stock Crítico' : '✅ Óptimo'}</td>
             <td>
+                <button class="btn-stock" onclick="updateStock(${index}, -1)">-</button>
+                <button class="btn-stock" onclick="updateStock(${index}, 1)">+</button>
                 <button class="btn-delete" onclick="deleteProduct(${index})">Eliminar</button>
             </td>
         `;
@@ -64,6 +65,18 @@ productForm.addEventListener('submit', (e) => {
 
     productForm.reset(); // Limpia el formulario
 });
+
+// Función para cambiar el stock rápidamente con los botones + y -
+window.updateStock = function(index, change) {
+    products[index].stock += change;
+    
+    // Evitamos que el stock baje de 0
+    if (products[index].stock < 0) {
+        products[index].stock = 0;
+    }
+    
+    saveAndRender();
+}
 
 // Función para eliminar un producto
 window.deleteProduct = function(index) {
