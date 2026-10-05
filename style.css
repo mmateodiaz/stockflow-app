@@ -257,3 +257,19 @@ tr.critico td {
     background-color: #dc2626;
     color: white;
 }
+/* Estilo para el botón secundario de ordenamiento */
+.btn-secondary {
+    background-color: #f1f5f9;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    padding: 8px 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+    background-color: #e2e8f0;
+}
