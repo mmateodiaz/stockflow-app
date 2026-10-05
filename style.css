@@ -273,3 +273,42 @@ tr.critico td {
 .btn-secondary:hover {
     background-color: #e2e8f0;
 }
+/* ----------------------------------------------------
+   Panel de Métricas (KPIs)
+---------------------------------------------------- */
+.metrics-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 4px;
+}
+
+.metric-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-left: 4px solid var(--accent);
+}
+
+.metric-card.metric-warning {
+    border-left-color: #dc2626; /* Destacado en rojo para stock crítico */
+}
+
+.metric-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.metric-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
