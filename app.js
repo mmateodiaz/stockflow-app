@@ -1,5 +1,6 @@
 const productForm = document.getElementById('product-form');
 const productList = document.getElementById('product-list');
+const searchInput = document.getElementById('search-input'); // Capturamos el buscador
 
 // Cargamos los productos guardados en el almacenamiento local o un array vacío si no hay nada
 let products = JSON.parse(localStorage.getItem('stockflow_products')) || [];
@@ -14,12 +15,25 @@ function saveAndRender() {
 function renderProducts() {
     productList.innerHTML = ''; // Limpiamos la tabla antes de redibujar
 
-    if (products.length === 0) {
-        productList.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #64748b;">No hay productos registrados.</td></tr>`;
+    // Obtenemos el texto que escribió el usuario en minúsculas para comparar bien
+    const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+    // Filtramos los productos que coincidan con el nombre o la categoría
+    const filteredProducts = products.filter(product => 
+        product.name.toLowerCase().includes(searchTerm) || 
+        product.category.toLowerCase().includes(searchTerm)
+    );
+
+    if (filteredProducts.length === 0) {
+        productList.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #64748b;">No se encontraron productos.</td></tr>`;
         return;
     }
 
-    products.forEach((product, index) => {
+    filteredProducts.forEach((product) => {
+        // IMPORTANTE: Buscamos el índice real en el array original 'products' 
+        // para que las acciones no fallen al estar filtrando.
+        const realIndex = products.indexOf(product);
+
         const isCritico = product.stock <= product.minStock;
         
         const row = document.createElement('tr');
@@ -34,14 +48,19 @@ function renderProducts() {
             <td>${product.minStock}</td>
             <td>${isCritico ? '⚠️ Stock Crítico' : '✅ Óptimo'}</td>
             <td>
-                <button class="btn-stock" onclick="updateStock(${index}, -1)">-</button>
-                <button class="btn-stock" onclick="updateStock(${index}, 1)">+</button>
-                <button class="btn-delete" onclick="deleteProduct(${index})">Eliminar</button>
+                <button class="btn-stock" onclick="updateStock(${realIndex}, -1)">-</button>
+                <button class="btn-stock" onclick="updateStock(${realIndex}, 1)">+</button>
+                <button class="btn-delete" onclick="deleteProduct(${realIndex})">Eliminar</button>
             </td>
         `;
 
         productList.appendChild(row);
     });
+}
+
+// Evento para que el buscador filtre en tiempo real mientras escribís
+if (searchInput) {
+    searchInput.addEventListener('input', renderProducts);
 }
 
 // Función para agregar un producto nuevo
