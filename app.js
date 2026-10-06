@@ -3,46 +3,38 @@ const productList = document.getElementById('product-list');
 const searchInput = document.getElementById('search-input');
 const btnSort = document.getElementById('btn-sort');
 
-// Cargamos los productos guardados en el almacenamiento local o un array vacío si no hay nada
 let products = JSON.parse(localStorage.getItem('stockflow_products')) || [];
-let isSorted = false; // Estado para saber si el orden alfabético está activo
+let isSorted = false;
 
-// Función para guardar en localStorage y actualizar tanto la vista como las métricas
 function saveAndRender() {
     localStorage.setItem('stockflow_products', JSON.stringify(products));
     renderProducts();
     updateMetrics();
 }
 
-// Función para actualizar el panel de métricas rápidas (KPIs)
 function updateMetrics() {
     const totalProductos = products.length;
     
-    // Contamos cuántos productos tienen stock menor o igual al mínimo
-    const stockCritico = products.filter(p => p.stock <= p.minStock).length;
+    // Consideramos crítico o en advertencia si está en la zona de riesgo (mínimo + 3)
+    const stockCritico = products.filter(p => p.stock <= (Number(p.minStock) + 3)).length;
     
-    // Sumamos todas las unidades de stock disponibles
     const unidadesTotales = products.reduce((acc, p) => acc + Number(p.stock), 0);
 
-    // Actualizamos los elementos en el HTML
     document.getElementById('metric-total').textContent = totalProductos;
     document.getElementById('metric-critico').textContent = stockCritico;
     document.getElementById('metric-unidades').textContent = unidadesTotales;
 }
 
-// Función para renderizar (dibujar) los productos en la tabla
 function renderProducts() {
-    productList.innerHTML = ''; // Limpiamos la tabla antes de redibujar
+    productList.innerHTML = '';
 
     const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
-    // Filtramos los productos por nombre o categoría
     let displayedProducts = products.filter(product => 
         product.name.toLowerCase().includes(searchTerm) || 
         product.category.toLowerCase().includes(searchTerm)
     );
 
-    // Si el orden alfabético está activado, ordenamos el array a mostrar
     if (isSorted) {
         displayedProducts.sort((a, b) => a.name.localeCompare(b.name));
     }
@@ -53,13 +45,24 @@ function renderProducts() {
     }
 
     displayedProducts.forEach((product) => {
-        // Buscamos el índice real en el array original 'products' para que las acciones no fallen al filtrar u ordenar
         const realIndex = products.indexOf(product);
-        const isCritico = product.stock <= product.minStock;
         
+        // Margen preventivo: avisa si está en el mínimo o hasta 3 unidades por encima
+        const margenAdvertencia = Number(product.minStock) + 3;
+        const isAdvertencia = product.stock <= margenAdvertencia;
+        const isCriticoReal = product.stock <= product.minStock;
+
         const row = document.createElement('tr');
-        if (isCritico) {
-            row.classList.add('critico');
+        if (isAdvertencia) {
+            row.classList.add('critico'); // Usa la misma clase visual de alerta
+        }
+
+        // Mensaje dinámico según qué tan al límite esté
+        let estadoTexto = '✅ Óptimo';
+        if (isCriticoReal) {
+            estadoTexto = '⚠️ ¡Stock Crítico!';
+        } else if (isAdvertencia) {
+            estadoTexto = '⚠️ Acercándose al mínimo';
         }
 
         row.innerHTML = `
@@ -67,7 +70,7 @@ function renderProducts() {
             <td>${product.category}</td>
             <td><strong>${product.stock}</strong></td>
             <td>${product.minStock}</td>
-            <td>${isCritico ? '⚠️ Stock Crítico' : '✅ Óptimo'}</td>
+            <td>${estadoTexto}</td>
             <td>
                 <button class="btn-stock" onclick="updateStock(${realIndex}, -1)">-</button>
                 <button class="btn-stock" onclick="updateStock(${realIndex}, 1)">+</button>
@@ -79,7 +82,6 @@ function renderProducts() {
     });
 }
 
-// Evento para activar o desactivar el orden alfabético (A-Z)
 if (btnSort) {
     btnSort.addEventListener('click', () => {
         isSorted = !isSorted;
@@ -90,12 +92,10 @@ if (btnSort) {
     });
 }
 
-// Evento para que el buscador filtre en tiempo real
 if (searchInput) {
     searchInput.addEventListener('input', renderProducts);
 }
 
-// Función para agregar un producto nuevo mediante el formulario
 productForm.addEventListener('submit', (e) => {
     e.preventDefault();
 
@@ -104,37 +104,25 @@ productForm.addEventListener('submit', (e) => {
     const stock = parseInt(document.getElementById('stock').value);
     const minStock = parseInt(document.getElementById('minStock').value);
 
-    const newProduct = {
-        name,
-        category,
-        stock,
-        minStock
-    };
+    const newProduct = { name, category, stock, minStock };
 
     products.push(newProduct);
     saveAndRender();
-
     productForm.reset();
 });
 
-// Función para cambiar el stock rápidamente con los botones + y -
 window.updateStock = function(index, change) {
     products[index].stock += change;
-    
-    // Evitamos que el stock baje de 0
     if (products[index].stock < 0) {
         products[index].stock = 0;
     }
-    
     saveAndRender();
 }
 
-// Función para eliminar un producto del inventario
 window.deleteProduct = function(index) {
     products.splice(index, 1);
     saveAndRender();
 }
 
-// Renderizamos la tabla y las métricas al cargar la página por primera vez
 renderProducts();
 updateMetrics();
