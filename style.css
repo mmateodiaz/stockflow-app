@@ -312,3 +312,103 @@ tr.critico td {
     font-weight: 700;
     color: var(--text-primary);
 }
+/* ----------------------------------------------------
+   Diseño de dos columnas: Inventario + Panel Lateral de Alertas
+---------------------------------------------------- */
+.inventory-layout {
+    display: grid;
+    grid-template-columns: 1fr 300px; /* Tabla grande a la izquierda, alertas de 300px a la derecha */
+    gap: 20px;
+    align-items: start;
+}
+
+@media (max-width: 900px) {
+    .inventory-layout {
+        grid-template-columns: 1fr; /* Si la pantalla es chica, se apilan uno abajo del otro */
+    }
+}
+
+/* ----------------------------------------------------
+   Panel Lateral de Alertas
+---------------------------------------------------- */
+.alerts-sidebar {
+    background-color: #f8fafc;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.alerts-sidebar h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.alerts-subtitle {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.alerts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.alert-item {
+    background-color: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 10px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+}
+
+.alert-item.critico-real {
+    border-left: 4px solid #dc2626;
+    background-color: #fef2f2;
+}
+
+.alert-item.advertencia-real {
+    border-left: 4px solid #d97706;
+    background-color: #fffbeb;
+}
+
+.alert-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.alert-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.critico-real .alert-badge {
+    color: #991b1b;
+    background-color: #fecaca;
+}
+
+.advertencia-real .alert-badge {
+    color: #92400e;
+    background-color: #fde68a;
+}
+
+.no-alerts {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-align: center;
+    padding: 15px 0;
+}

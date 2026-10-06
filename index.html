@@ -55,34 +55,52 @@
     </section>
 
     <!-- Listado de productos e Inventario Actual -->
+    <!-- Listado de productos e Inventario Actual -->
     <section class="card">
-        <h2>Inventario Actual</h2>
+        <h2>Inventario Actual y Alertas</h2>
         
         <div class="search-container" style="margin-bottom: 15px;">
             <input type="text" id="search-input" placeholder="🔍 Buscar producto por nombre o categoría..." style="width: 100%; padding: 10px; border: 1px solid var(--border-color, #cbd5e1); border-radius: 6px; font-size: 0.95rem;">
         </div>
 
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Producto</th>
-                        <th>Categoría</th>
-                        <th>Stock</th>
-                        <th>Mínimo</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="product-list">
-                    <!-- Los productos se cargan dinámicamente con JS -->
-                </tbody>
-            </table>
-        </div>
+        <!-- Contenedor principal en dos columnas (Tabla a la izquierda, Panel de Alertas a la derecha) -->
+        <div class="inventory-layout">
+            
+            <!-- Columna Izquierda: Tabla de productos -->
+            <div class="table-container-wrapper">
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Categoría</th>
+                                <th>Stock</th>
+                                <th>Mínimo</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="product-list">
+                            <!-- Los productos se cargan dinámicamente con JS -->
+                        </tbody>
+                    </table>
+                </div>
 
-        <!-- Botón para ordenar alfabéticamente -->
-        <div style="margin-top: 16px; display: flex; justify-content: flex-end;">
-            <button id="btn-sort" class="btn-secondary">🔤 Ordenar Alfabéticamente (A-Z)</button>
+                <!-- Botón para ordenar alfabéticamente -->
+                <div style="margin-top: 16px; display: flex; justify-content: flex-end;">
+                    <button id="btn-sort" class="btn-secondary">🔤 Ordenar Alfabéticamente (A-Z)</button>
+                </div>
+            </div>
+
+            <!-- Columna Derecha: Panel Lateral de Alertas -->
+            <div class="alerts-sidebar">
+                <h3>⚠️ Alertas de Reposición</h3>
+                <p class="alerts-subtitle">Productos críticos o próximos al mínimo.</p>
+                <div id="alerts-list" class="alerts-list">
+                    <!-- Las alertas se cargan dinámicamente con JS -->
+                </div>
+            </div>
+
         </div>
     </section>
 

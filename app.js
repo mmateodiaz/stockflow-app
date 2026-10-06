@@ -25,8 +25,11 @@ function updateMetrics() {
     document.getElementById('metric-unidades').textContent = unidadesTotales;
 }
 
+// Función para renderizar (dibujar) los productos en la tabla y en el panel lateral de alertas
 function renderProducts() {
-    productList.innerHTML = '';
+    productList.innerHTML = ''; // Limpiamos la tabla antes de redibujar
+    const alertsList = document.getElementById('alerts-list');
+    if (alertsList) alertsList.innerHTML = ''; // Limpiamos el panel lateral
 
     const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
@@ -41,23 +44,48 @@ function renderProducts() {
 
     if (displayedProducts.length === 0) {
         productList.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #64748b;">No se encontraron productos.</td></tr>`;
-        return;
     }
 
+    // Filtrar productos para el panel lateral (solo los que están en advertencia o crítico)
+    const warningProducts = products.filter(product => {
+        const margenAdvertencia = Number(product.minStock) + 3;
+        return product.stock <= margenAdvertencia;
+    });
+
+    // Renderizar panel lateral de alertas
+    if (alertsList) {
+        if (warningProducts.length === 0) {
+            alertsList.innerHTML = `<p class="no-alerts">✅ Todo en orden. No hay productos con stock bajo.</p>`;
+        } else {
+            warningProducts.forEach(product => {
+                const isCriticoReal = product.stock <= product.minStock;
+                const alertItem = document.createElement('div');
+                alertItem.className = `alert-item ${isCriticoReal ? 'critico-real' : 'advertencia-real'}`;
+                
+                alertItem.innerHTML = `
+                    <div class="alert-info">
+                        <strong>${product.name}</strong>
+                        <span>Stock: <strong>${product.stock}</strong> (Mín: ${product.minStock})</span>
+                    </div>
+                    <span class="alert-badge">${isCriticoReal ? '⚠️ Crítico' : '⚡ Bajo'}</span>
+                `;
+                alertsList.appendChild(alertItem);
+            });
+        }
+    }
+
+    // Renderizar filas de la tabla principal
     displayedProducts.forEach((product) => {
         const realIndex = products.indexOf(product);
-        
-        // Margen preventivo: avisa si está en el mínimo o hasta 3 unidades por encima
         const margenAdvertencia = Number(product.minStock) + 3;
         const isAdvertencia = product.stock <= margenAdvertencia;
         const isCriticoReal = product.stock <= product.minStock;
 
         const row = document.createElement('tr');
         if (isAdvertencia) {
-            row.classList.add('critico'); // Usa la misma clase visual de alerta
+            row.classList.add('critico');
         }
 
-        // Mensaje dinámico según qué tan al límite esté
         let estadoTexto = '✅ Óptimo';
         if (isCriticoReal) {
             estadoTexto = '⚠️ ¡Stock Crítico!';
@@ -80,48 +108,6 @@ function renderProducts() {
 
         productList.appendChild(row);
     });
-}
-
-if (btnSort) {
-    btnSort.addEventListener('click', () => {
-        isSorted = !isSorted;
-        btnSort.textContent = isSorted ? '🔄 Restaurar Orden Original' : '🔤 Ordenar Alfabéticamente (A-Z)';
-        btnSort.style.backgroundColor = isSorted ? '#0f172a' : '';
-        btnSort.style.color = isSorted ? '#ffffff' : '';
-        renderProducts();
-    });
-}
-
-if (searchInput) {
-    searchInput.addEventListener('input', renderProducts);
-}
-
-productForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const name = document.getElementById('name').value.trim();
-    const category = document.getElementById('category').value.trim();
-    const stock = parseInt(document.getElementById('stock').value);
-    const minStock = parseInt(document.getElementById('minStock').value);
-
-    const newProduct = { name, category, stock, minStock };
-
-    products.push(newProduct);
-    saveAndRender();
-    productForm.reset();
-});
-
-window.updateStock = function(index, change) {
-    products[index].stock += change;
-    if (products[index].stock < 0) {
-        products[index].stock = 0;
-    }
-    saveAndRender();
-}
-
-window.deleteProduct = function(index) {
-    products.splice(index, 1);
-    saveAndRender();
 }
 
 renderProducts();
