@@ -3,6 +3,7 @@ const productList = document.getElementById('product-list');
 const searchInput = document.getElementById('search-input');
 const btnSort = document.getElementById('btn-sort');
 
+// Cargamos los productos guardados en el almacenamiento local o un array vacío
 let products = JSON.parse(localStorage.getItem('stockflow_products')) || [];
 let isSorted = false;
 
@@ -12,29 +13,32 @@ function saveAndRender() {
     updateMetrics();
 }
 
+// Función segura para actualizar métricas (si no existen en el HTML, no rompe la app)
 function updateMetrics() {
     const totalProductos = products.length;
-    
-    // Consideramos crítico o en advertencia si está en la zona de riesgo (mínimo + 3)
     const stockCritico = products.filter(p => p.stock <= (Number(p.minStock) + 3)).length;
-    
     const unidadesTotales = products.reduce((acc, p) => acc + Number(p.stock), 0);
 
-    document.getElementById('metric-total').textContent = totalProductos;
-    document.getElementById('metric-critico').textContent = stockCritico;
-    document.getElementById('metric-unidades').textContent = unidadesTotales;
+    const elTotal = document.getElementById('metric-total');
+    const elCritico = document.getElementById('metric-critico');
+    const elUnidades = document.getElementById('metric-unidades');
+
+    if (elTotal) elTotal.textContent = totalProductos;
+    if (elCritico) elCritico.textContent = stockCritico;
+    if (elUnidades) elUnidades.textContent = unidadesTotales;
 }
 
-// Función para renderizar (dibujar) los productos en la tabla y en el panel lateral de alertas
-// Función para renderizar (dibujar) los productos separando inventario y alertas
+// Función para renderizar productos, tabla y panel de alertas de forma segura
 function renderProducts() {
-    productList.innerHTML = ''; // Limpiamos la tabla
+    if (!productList) return; // Si no existe la lista, frena para evitar errores
+
+    productList.innerHTML = ''; 
     const alertsList = document.getElementById('alerts-list');
-    if (alertsList) alertsList.innerHTML = ''; // Limpiamos el panel lateral
+    if (alertsList) alertsList.innerHTML = ''; 
 
     const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
-    // 1. Separamos los productos en dos grupos según su stock
+    // Separamos productos en advertencia/crítico vs normales
     const warningProducts = [];
     const normalProducts = [];
 
@@ -47,21 +51,19 @@ function renderProducts() {
         }
     });
 
-    // 2. Filtramos los productos normales según el buscador de la tabla
     let displayedNormalProducts = normalProducts.filter(product => 
         product.name.toLowerCase().includes(searchTerm) || 
         product.category.toLowerCase().includes(searchTerm)
     );
 
-    // 3. Ordenamiento alfabético si está activo
     if (isSorted) {
         displayedNormalProducts.sort((a, b) => a.name.localeCompare(b.name));
     }
 
-    // --- RENDERIZAR PANEL LATERAL DE ALERTAS ---
+    // Renderizar panel lateral de alertas (si existe en el HTML)
     if (alertsList) {
         if (warningProducts.length === 0) {
-            alertsList.innerHTML = `<p class="no-alerts">✅ Todo en orden. No hay productos con stock bajo.</p>`;
+            alertsList.innerHTML = `<p class="no-alerts">✅ Todo en orden. No hay stock bajo.</p>`;
         } else {
             warningProducts.forEach(product => {
                 const realIndex = products.indexOf(product);
@@ -76,7 +78,6 @@ function renderProducts() {
                     </div>
                     <div style="display: flex; align-items: center; gap: 6px;">
                         <span class="alert-badge">${isCriticoReal ? '⚠️ Crítico' : '⚡ Bajo'}</span>
-                        <!-- Botones rápidos también en la alerta para sumar stock al instante -->
                         <button class="btn-stock" onclick="updateStock(${realIndex}, 1)" title="Sumar 1">+</button>
                     </div>
                 `;
@@ -85,7 +86,7 @@ function renderProducts() {
         }
     }
 
-    // --- RENDERIZAR TABLA PRINCIPAL (Solo productos en estado óptimo) ---
+    // Renderizar tabla principal
     if (displayedNormalProducts.length === 0) {
         productList.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #64748b;">No hay productos óptimos para mostrar.</td></tr>`;
         return;
@@ -112,5 +113,58 @@ function renderProducts() {
     });
 }
 
+// Evento de ordenamiento
+if (btnSort) {
+    btnSort.addEventListener('click', () => {
+        isSorted = !isSorted;
+        btnSort.textContent = isSorted ? '🔄 Restaurar Orden Original' : '🔤 Ordenar Alfabéticamente (A-Z)';
+        btnSort.style.backgroundColor = isSorted ? '#0f172a' : '';
+        btnSort.style.color = isSorted ? '#ffffff' : '';
+        renderProducts();
+    });
+}
+
+// Evento de búsqueda
+if (searchInput) {
+    searchInput.addEventListener('input', renderProducts);
+}
+
+// Evento para agregar productos
+if (productForm) {
+    productForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById('name').value.trim();
+        const category = document.getElementById('category').value.trim();
+        const stock = parseInt(document.getElementById('stock').value);
+        const minStock = parseInt(document.getElementById('minStock').value);
+
+        if (!name) return;
+
+        const newProduct = { name, category, stock, minStock };
+
+        products.push(newProduct);
+        saveAndRender();
+        productForm.reset();
+    });
+}
+
+// Funciones globales para los botones de la tabla y alertas
+window.updateStock = function(index, change) {
+    if (products[index]) {
+        products[index].stock += change;
+        if (products[index].stock < 0) {
+            products[index].stock = 0;
+        }
+        saveAndRender();
+    }
+}
+
+window.deleteProduct = function(index) {
+    products.splice(index, 1);
+    saveAndRender();
+}
+
+// Inicialización
 renderProducts();
 updateMetrics();
