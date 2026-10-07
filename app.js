@@ -170,7 +170,7 @@ window.deleteProduct = function(index) {
 renderProducts();
 updateMetrics();
 
-// Lógica para importar productos desde un archivo Excel o CSV
+// Lógica para importar productos desde un archivo Excel o CSV (Evita duplicados y actualiza)
 const excelUpload = document.getElementById('excel-upload');
 
 if (excelUpload) {
@@ -183,15 +183,10 @@ if (excelUpload) {
             try {
                 const data = new Uint8Array(e.target.result);
                 const workbook = XLSX.read(data, { type: 'array' });
-
-                // Tomamos la primera hoja del Excel
                 const firstSheetName = workbook.SheetNames[0];
                 const worksheet = workbook.Sheets[firstSheetName];
-
-                // Convertimos la hoja a un array de objetos JSON
                 const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
-                // Mapeamos los datos adaptándolos a la estructura de StockFlow
                 const importedProducts = jsonData.map(row => ({
                     name: String(row.Nombre || row.producto || row.PRODUCTO || row.Name || 'Sin nombre').trim(),
                     category: String(row.Categoría || row.Categoria || row.CATEGORIA || row.Category || 'General').trim(),
@@ -200,41 +195,77 @@ if (excelUpload) {
                     price: parseFloat(row.Precio || row.PRECIO || row.precio || 0)
                 })).filter(p => p.name !== 'Sin nombre');
 
-                if (importedProducts.length > 0) {
-                    // Los sumamos a los productos existentes
-                    products = [...products, ...importedProducts];
-                    saveAndRender();
-                    alert(`¡Se importaron ${importedProducts.length} productos con éxito!`);
-                } else {
-                    alert('No se pudieron leer productos válidos. Verificá que el Excel tenga columnas como Nombre, Categoría, Stock y Mínimo.');
-                }
+                let countNew = 0;
+                let countUpdated = 0;
+
+                importedProducts.forEach(impProd => {
+                    const existingIndex = products.findIndex(p => p.name.toLowerCase() === impProd.name.toLowerCase());
+                    
+                    if (existingIndex !== -1) {
+                        products[existingIndex] = impProd;
+                        countUpdated++;
+                    } else {
+                        products.push(impProd);
+                        countNew++;
+                    }
+                });
+
+                saveAndRender();
+                alert(`¡Proceso exitoso! Se agregaron ${countNew} nuevos y se actualizaron ${countUpdated} productos existentes.`);
             } catch (error) {
                 console.error(error);
                 alert('Hubo un error al leer el archivo Excel.');
             }
-            
-            // Limpiamos el input para permitir cargar el mismo archivo de nuevo si hace falta
             excelUpload.value = '';
         };
-
         reader.readAsArrayBuffer(file);
     });
 }
-// Función para renderizar la pestaña exclusiva de Lista de Precios
+
+// Formulario manual con precio y control de duplicados
+if (productForm) {
+    productForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById('name').value.trim();
+        const category = document.getElementById('category').value.trim();
+        const stock = parseInt(document.getElementById('stock').value);
+        const minStock = parseInt(document.getElementById('minStock').value);
+        const price = parseFloat(document.getElementById('price').value) || 0;
+
+        if (!name) return;
+
+        const newProduct = { name, category, stock, minStock, price };
+
+        const existingIndex = products.findIndex(p => p.name.toLowerCase() === name.toLowerCase());
+        if (existingIndex !== -1) {
+            products[existingIndex] = newProduct;
+        } else {
+            products.push(newProduct);
+        }
+
+        saveAndRender();
+        productForm.reset();
+    });
+}
+
+// Renderizar la lista de precios (Solo muestra productos con precio mayor a 0)
 function renderPriceList() {
     const priceListContainer = document.getElementById('price-list');
     if (!priceListContainer) return;
 
     priceListContainer.innerHTML = '';
 
-    if (products.length === 0) {
-        priceListContainer.innerHTML = `<tr><td colspan="2" style="text-align: center; color: #64748b;">No hay precios cargados.</td></tr>`;
+    const pricedProducts = products.filter(product => Number(product.price) > 0);
+
+    if (pricedProducts.length === 0) {
+        priceListContainer.innerHTML = `<tr><td colspan="2" style="text-align: center; color: #64748b;">No hay productos con precio cargado para mostrar.</td></tr>`;
         return;
     }
 
-    products.forEach(product => {
+    pricedProducts.forEach(product => {
         const row = document.createElement('tr');
-        const formattedPrice = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(product.price || 0);
+        const formattedPrice = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(product.price);
 
         row.innerHTML = `
             <td><strong>${product.name}</strong></td>
@@ -243,3 +274,6 @@ function renderPriceList() {
         priceListContainer.appendChild(row);
     });
 }
+
+// Llamada inicial para renderizar la lista de precios al cargar la página
+renderPriceList();
