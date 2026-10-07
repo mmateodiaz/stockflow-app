@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <!-- Librería SheetJS para leer archivos Excel en el navegador -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StockFlow - Control de Inventario</title>
@@ -51,7 +53,13 @@
                 <input type="number" id="minStock" required min="0" placeholder="5">
             </div>
             <button type="submit" class="btn-primary">Guardar Producto</button>
-        </form>
+        </form><!-- Botón para importar Excel -->
+<div style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+    <label for="excel-upload" class="btn-secondary" style="cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+        📊 Cargar desde Excel (.xlsx / .csv)
+    </label>
+    <input type="file" id="excel-upload" accept=".xlsx, .xls, .csv" style="display: none;">
+</div>
     </section>
 
     <!-- Listado de productos e Inventario Actual -->

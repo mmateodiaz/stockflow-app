@@ -168,3 +168,53 @@ window.deleteProduct = function(index) {
 // Inicialización
 renderProducts();
 updateMetrics();
+
+// Lógica para importar productos desde un archivo Excel o CSV
+const excelUpload = document.getElementById('excel-upload');
+
+if (excelUpload) {
+    excelUpload.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+
+                // Tomamos la primera hoja del Excel
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+
+                // Convertimos la hoja a un array de objetos JSON
+                const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+                // Mapeamos los datos adaptándolos a la estructura de StockFlow
+                const importedProducts = jsonData.map(row => ({
+                    name: String(row.Nombre || row.producto || row.PRODUCTO || row.Name || 'Sin nombre').trim(),
+                    category: String(row.Categoría || row.Categoria || row.CATEGORIA || row.Category || 'General').trim(),
+                    stock: parseInt(row.Stock || row.STOCK || row.stock || 0),
+                    minStock: parseInt(row.Minimo || row.Mínimo || row.MINIMO || row.minStock || 5)
+                })).filter(p => p.name !== 'Sin nombre');
+
+                if (importedProducts.length > 0) {
+                    // Los sumamos a los productos existentes
+                    products = [...products, ...importedProducts];
+                    saveAndRender();
+                    alert(`¡Se importaron ${importedProducts.length} productos con éxito!`);
+                } else {
+                    alert('No se pudieron leer productos válidos. Verificá que el Excel tenga columnas como Nombre, Categoría, Stock y Mínimo.');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Hubo un error al leer el archivo Excel.');
+            }
+            
+            // Limpiamos el input para permitir cargar el mismo archivo de nuevo si hace falta
+            excelUpload.value = '';
+        };
+
+        reader.readAsArrayBuffer(file);
+    });
+}
