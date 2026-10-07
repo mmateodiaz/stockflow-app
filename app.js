@@ -11,6 +11,7 @@ function saveAndRender() {
     localStorage.setItem('stockflow_products', JSON.stringify(products));
     renderProducts();
     updateMetrics();
+    renderPriceList();
 }
 
 // Función segura para actualizar métricas (si no existen en el HTML, no rompe la app)
@@ -195,7 +196,8 @@ if (excelUpload) {
                     name: String(row.Nombre || row.producto || row.PRODUCTO || row.Name || 'Sin nombre').trim(),
                     category: String(row.Categoría || row.Categoria || row.CATEGORIA || row.Category || 'General').trim(),
                     stock: parseInt(row.Stock || row.STOCK || row.stock || 0),
-                    minStock: parseInt(row.Minimo || row.Mínimo || row.MINIMO || row.minStock || 5)
+                    minStock: parseInt(row.Minimo || row.Mínimo || row.MINIMO || row.minStock || 5),
+                    price: parseFloat(row.Precio || row.PRECIO || row.precio || 0)
                 })).filter(p => p.name !== 'Sin nombre');
 
                 if (importedProducts.length > 0) {
@@ -216,5 +218,28 @@ if (excelUpload) {
         };
 
         reader.readAsArrayBuffer(file);
+    });
+}
+// Función para renderizar la pestaña exclusiva de Lista de Precios
+function renderPriceList() {
+    const priceListContainer = document.getElementById('price-list');
+    if (!priceListContainer) return;
+
+    priceListContainer.innerHTML = '';
+
+    if (products.length === 0) {
+        priceListContainer.innerHTML = `<tr><td colspan="2" style="text-align: center; color: #64748b;">No hay precios cargados.</td></tr>`;
+        return;
+    }
+
+    products.forEach(product => {
+        const row = document.createElement('tr');
+        const formattedPrice = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(product.price || 0);
+
+        row.innerHTML = `
+            <td><strong>${product.name}</strong></td>
+            <td style="text-align: right; color: #059669; font-weight: 600;">${formattedPrice}</td>
+        `;
+        priceListContainer.appendChild(row);
     });
 }

@@ -94,6 +94,7 @@
                     </table>
                 </div>
 
+
                 <!-- Botón para ordenar alfabéticamente -->
                 <div style="margin-top: 16px; display: flex; justify-content: flex-end;">
                     <button id="btn-sort" class="btn-secondary">🔤 Ordenar Alfabéticamente (A-Z)</button>
@@ -111,7 +112,27 @@
 
         </div>
     </section>
+<!-- Sección / Pestaña de Lista de Precios para Clientes -->
+<section class="card" style="margin-top: 24px; border-top: 4px solid #10b981;">
+    <h2 style="color: #065f46;">💵 Lista de Precios al Público</h2>
+    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px;">
+        Vista simplificada de productos y precios actualizados.
+    </p>
 
+    <div class="table-responsive">
+        <table id="price-list-table">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th style="text-align: right;">Precio</th>
+                </tr>
+            </thead>
+            <tbody id="price-list">
+                <!-- Se carga automáticamente desde el Excel -->
+            </tbody>
+        </table>
+    </div>
+</section>
 </main>
 
 <script src="app.js"></script>
