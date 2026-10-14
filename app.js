@@ -306,6 +306,50 @@ function renderDrinks() {
         drinksListContainer.appendChild(row);
     });
 }
+// --- LÓGICA DEL MENÚ DESPLEGABLE DE TRES PUNTITOS ---
+const menuBtn = document.getElementById('menu-btn');
+const dropdownMenu = document.getElementById('dropdown-menu');
+
+if (menuBtn && dropdownMenu) {
+    // Abrir/Cerrar menú al hacer clic en los tres puntitos
+    menuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+    });
+
+    // Cerrar el menú si se hace clic fuera
+    document.addEventListener('click', () => {
+        dropdownMenu.style.display = 'none';
+    });
+}
+
+// Opción 1: Ver Valor Total del Inventario
+document.getElementById('opt-total-inventory')?.addEventListener('click', () => {
+    const totalValue = products.reduce((acc, p) => acc + ((p.price || 0) * (p.stock || 0)), 0);
+    const formattedTotal = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(totalValue);
+    alert(`📊 El valor total monetario del inventario actual es: ${formattedTotal}`);
+});
+
+// Opción 2: Ver Total de Bebidas
+document.getElementById('opt-total-drinks')?.addEventListener('click', () => {
+    const drinkProducts = products.filter(product => {
+        const cat = (product.category || '').toLowerCase();
+        return cat.includes('bebida') || cat.includes('alcohol') || cat.includes('jugo') || cat.includes('agua') || cat.includes('gaseosa') || cat.includes('vino') || cat.includes('cerveza');
+    });
+    const totalDrinksStock = drinkProducts.reduce((acc, p) => acc + (p.stock || 0), 0);
+    alert(`🥤 Tenés un total de ${drinkProducts.length} tipos de bebidas registradas, sumando un stock total de ${totalDrinksStock} unidades.`);
+});
+
+// Opción 3: Ver Productos Faltantes / Críticos
+document.getElementById('opt-missing-products')?.addEventListener('click', () => {
+    const missing = products.filter(p => (p.stock || 0) <= (p.minStock || 5));
+    if (missing.length === 0) {
+        alert(`⚠️ ¡Excelente! No hay productos en estado crítico o faltantes.`);
+    } else {
+        const names = missing.map(p => `• ${p.name} (Stock: ${p.stock})`).join('\n');
+        alert(`⚠️ Productos críticos o faltantes:\n\n${names}`);
+    }
+});
 
 // Llamada inicial para renderizar la lista de precios al cargar la página
 renderPriceList();
