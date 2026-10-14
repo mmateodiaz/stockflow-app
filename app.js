@@ -12,6 +12,7 @@ function saveAndRender() {
     renderProducts();
     updateMetrics();
     renderPriceList();
+    renderDrinks();
 }
 
 // Función segura para actualizar métricas (si no existen en el HTML, no rompe la app)
@@ -274,6 +275,38 @@ function renderPriceList() {
         priceListContainer.appendChild(row);
     });
 }
+// --- RENDERIZAR LA SECCIÓN EXCLUSIVA DE BEBIDAS ---
+function renderDrinks() {
+    const drinksListContainer = document.getElementById('drinks-list');
+    if (!drinksListContainer) return;
+
+    drinksListContainer.innerHTML = '';
+
+    // Filtramos los productos cuya categoría sea Bebidas o contenga términos relacionados
+    const drinkProducts = products.filter(product => {
+        const cat = (product.category || '').toLowerCase();
+        return cat.includes('bebida') || cat.includes('alcohol') || cat.includes('jugo') || cat.includes('agua') || cat.includes('gaseosa') || cat.includes('vino') || cat.includes('cerveza');
+    });
+
+    if (drinkProducts.length === 0) {
+        drinksListContainer.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #64748b;">No hay bebidas cargadas en el inventario.</td></tr>`;
+        return;
+    }
+
+    drinkProducts.forEach(product => {
+        const row = document.createElement('tr');
+        const formattedPrice = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(product.price || 0);
+
+        row.innerHTML = `
+            <td><strong>${product.name}</strong></td>
+            <td><span style="background: #eff6ff; color: #1d4ed8; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem;">${product.category}</span></td>
+            <td>${product.stock}</td>
+            <td style="text-align: right; color: #059669; font-weight: 600;">${formattedPrice}</td>
+        `;
+        drinksListContainer.appendChild(row);
+    });
+}
 
 // Llamada inicial para renderizar la lista de precios al cargar la página
 renderPriceList();
+renderDrinks();
