@@ -108,6 +108,7 @@ function renderProducts() {
                 <button class="btn-stock" onclick="updateStock(${realIndex}, -1)">-</button>
                 <button class="btn-stock" onclick="updateStock(${realIndex}, 1)">+</button>
                 <button class="btn-delete" onclick="deleteProduct(${realIndex})">Eliminar</button>
+                <a href="grafico-producto.html?nombre=${encodeURIComponent(product.name)}" target="_blank" style="padding: 4px 8px; font-size: 0.75rem; text-decoration: none; border-radius: 4px; background: #e0e7ff; color: #3730a3; margin-left: 4px;" title="Ver Gráfico de Rendimiento">📈 Gráfico</a>
             </td>
         `;
 
