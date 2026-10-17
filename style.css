@@ -412,3 +412,29 @@ tr.critico td {
     text-align: center;
     padding: 15px 0;
 }
+/* --- DISEÑO DE DOS COLUMNAS TIPO DASHBOARD --- */
+@media (min-width: 1024px) {
+    /* Si la pantalla es grande (PC), dividimos en dos columnas */
+    body {
+        background-color: #f8fafc;
+    }
+    
+    .container {
+        max-width: 1400px !important; /* Ampliamos el ancho máximo de la página */
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* Contenedor principal en Grid */
+    .dashboard-layout {
+        display: grid;
+        grid-template-columns: 380px 1fr; /* Columna izquierda fija para controles, derecha flexible para tablas */
+        gap: 24px;
+        align-items: start;
+    }
+
+    .sidebar-controls {
+        position: sticky;
+        top: 20px;
+    }
+}
