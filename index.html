@@ -77,6 +77,21 @@
     <input type="file" id="excel-upload" accept=".xlsx, .xls, .csv" style="display: none;">
 </div>
     </section>
+    <!-- 📷 CARGA AUTOMÁTICA POR FOTO DE FACTURA -->
+<div class="card" style="margin-top: 24px; border-top: 4px solid #8b5cf6;">
+    <h2 style="color: #7c3aed;">📸 Carga Inteligente por Foto/Factura</h2>
+    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px;">
+        Sacale una foto a tu factura o subí la imagen para registrar productos automáticamente.
+    </p>
+
+    <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+        <input type="file" id="invoice-upload" accept="image/*" capture="environment" style="display: none;">
+        <button id="btn-scan-invoice" class="btn-primary" style="background: #7c3aed; padding: 10px 16px; border: none; border-radius: 6px; color: white; cursor: pointer; font-weight: 600;">
+            📷 Sacar Foto / Subir Factura
+        </button>
+        <span id="scan-status" style="font-size: 0.85rem; color: var(--text-secondary);">Ninguna factura procesada aún.</span>
+    </div>
+</div>
 
     <!-- Listado de productos e Inventario Actual -->
     <!-- Listado de productos e Inventario Actual -->

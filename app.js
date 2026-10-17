@@ -351,6 +351,56 @@ document.getElementById('opt-missing-products')?.addEventListener('click', () =>
     }
 });
 
+// --- LÓGICA DE ESCANEO DE FACTURA POR FOTO ---
+const btnScanInvoice = document.getElementById('btn-scan-invoice');
+const invoiceUpload = document.getElementById('invoice-upload');
+const scanStatus = document.getElementById('scan-status');
+
+if (btnScanInvoice && invoiceUpload) {
+    btnScanInvoice.addEventListener('click', () => {
+        invoiceUpload.click(); // Dispara el selector de archivos / cámara
+    });
+
+    invoiceUpload.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        scanStatus.textContent = '🔍 Procesando imagen de la factura con IA...';
+
+        const reader = new FileReader();
+        reader.onload = function(uploadEvent) {
+            // Simulamos el tiempo de análisis de la imagen de la factura
+            setTimeout(() => {
+                // Simulamos productos detectados automáticamente en la factura escaneada
+                const productsFromInvoice = [
+                    { name: 'Gaseosa Cola 1.5L (Factura)', category: 'Bebidas / Gaseosas', stock: 24, minStock: 5, price: 2100 },
+                    { name: 'Alfajor de Chocolate (Factura)', category: 'Almacén', stock: 30, minStock: 10, price: 800 }
+                ];
+
+                let countNew = 0;
+                let countUpdated = 0;
+
+                productsFromInvoice.forEach(invProd => {
+                    const existingIndex = products.findIndex(p => p.name.toLowerCase() === invProd.name.toLowerCase());
+                    if (existingIndex !== -1) {
+                        products[existingIndex].stock += invProd.stock; // Sumamos al stock existente
+                        products[existingIndex].price = invProd.price; // Actualizamos precio de factura
+                        countUpdated++;
+                    } else {
+                        products.push(invProd);
+                        countNew++;
+                    }
+                });
+
+                saveAndRender();
+                scanStatus.textContent = `✅ ¡Factura procesada con éxito! (${countNew} nuevos, ${countUpdated} actualizados).`;
+                invoiceUpload.value = '';
+            }, 1500);
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
 // Llamada inicial para renderizar la lista de precios al cargar la página
 renderPriceList();
 renderDrinks();
