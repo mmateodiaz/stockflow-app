@@ -43,3 +43,13 @@ Si deseas clonar y probar este proyecto en tu computadora, sigue estos pasos:
 1. Clona el repositorio:
    ```bash
    git clone [https://github.com/mmateodiaz/stockflow-app.git](https://github.com/mmateodiaz/stockflow-app.git)
+2. Accede a la carpeta del proyecto
+    cd stockflow-app
+3. Abre la aplicación:
+Abre el archivo index.html directamente en tu navegador web, o utiliza una herramienta de desarrollo como Live Server en Visual Studio Code para ejecutarlo en un entorno local con recarga en vivo
+
+
+
+Desarrollado por Mateo Diaz
+
+Estudiante de Ingeniería en Sistemas de Información — Universidad Tecnológica Nacional, Facultad Regional Córdoba (UTN FRC).
