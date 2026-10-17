@@ -27,8 +27,10 @@
             </div>
         </div>
 
+        <h1 style="margin-bottom: 20px;">StockFlow - Control de Inventario</h1>
+
         <!-- 🟢 LAYOUT DE DOS COLUMNAS -->
-        <div class="dashboard-layout" style="display: grid; grid-template-columns: 380px 1fr; gap: 24px; align-items: start; margin-top: 20px;">
+        <div class="dashboard-layout" style="display: grid; grid-template-columns: 380px 1fr; gap: 24px; align-items: start;">
             
             <!-- ⬅️ COLUMNA IZQUIERDA: Métricas y Formularios de Carga -->
             <div class="sidebar-controls" style="display: flex; flex-direction: column; gap: 20px;">
@@ -49,152 +51,111 @@
                     </div>
                 </div>
 
-                <!-- (Acá abajo de las métricas en la columna izquierda va tu tarjeta de Formulario de Carga, Excel y Foto) -->
+                <!-- Tu formulario de carga actual -->
+                <section class="card">
+                    <h2>Agregar Nuevo Producto</h2>
+                    <form id="product-form">
+                        <div class="form-group">
+                            <label for="name">Nombre del producto:</label>
+                            <input type="text" id="name" required placeholder="Ej. Harina 000">
+                        </div>
+                        <div class="form-group">
+                            <label for="category">Categoría:</label>
+                            <input type="text" id="category" required placeholder="Ej. Almacén">
+                        </div>
+                        <div class="form-group">
+                            <label for="stock">Stock Actual:</label>
+                            <input type="number" id="stock" required min="0" placeholder="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="minStock">Stock Mínimo (Alerta):</label>
+                            <input type="number" id="minStock" required min="0" placeholder="5">
+                        </div>
+                        <button type="submit" class="btn-primary">Guardar Producto</button>
+                    </form>
+                </section>
 
-    <!-- Sección del Formulario -->
-    <section class="card">
-        <h2>Agregar Nuevo Producto</h2>
-        <form id="product-form">
-            <div class="form-group">
-                <label for="name">Nombre del producto:</label>
-                <input type="text" id="name" required placeholder="Ej. Harina 000">
-            </div>
-            <div class="form-group">
-                <label for="category">Categoría:</label>
-                <input type="text" id="category" required placeholder="Ej. Almacén">
-            </div>
-            <div class="form-group">
-                <label for="stock">Stock Actual:</label>
-                <input type="number" id="stock" required min="0" placeholder="0">
-            </div>
-            <div class="form-group">
-                <label for="minStock">Stock Mínimo (Alerta):</label>
-                <input type="number" id="minStock" required min="0" placeholder="5">
-            </div>
-            <div class="form-group">
-    <label for="price">Precio ($):</label>
-    <input type="number" id="price" min="0" step="0.01" placeholder="0.00">
-</div>
-            <button type="submit" class="btn-primary">Guardar Producto</button>
-        </form><!-- Botón para importar Excel -->
-<div style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
-    <label for="excel-upload" class="btn-secondary" style="cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
-        📊 Cargar desde Excel (.xlsx / .csv)
-    </label>
-    <input type="file" id="excel-upload" accept=".xlsx, .xls, .csv" style="display: none;">
-</div>
-    </section>
-    <!-- 📷 CARGA AUTOMÁTICA POR FOTO DE FACTURA -->
-<div class="card" style="margin-top: 24px; border-top: 4px solid #8b5cf6;">
-    <h2 style="color: #7c3aed;">📸 Carga Inteligente por Foto/Factura</h2>
-    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px;">
-        Sacale una foto a tu factura o subí la imagen para registrar productos automáticamente.
-    </p>
+                <!-- Tarjeta de Carga de Factura por Foto -->
+                <section class="card" style="border-top: 4px solid #8b5cf6;">
+                    <h2 style="color: #7c3aed; font-size: 1.2rem;">📸 Carga por Foto/Factura</h2>
+                    <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 12px;">Subí la foto de tu factura para registrar productos automáticamente.</p>
+                    <input type="file" id="invoice-upload" accept="image/*" capture="environment" style="display: none;">
+                    <button id="btn-scan-invoice" class="btn-primary" style="background: #7c3aed; width: 100%;">📷 Subir Factura / Foto</button>
+                    <span id="scan-status" style="font-size: 0.8rem; color: var(--text-secondary); display: block; margin-top: 8px;">Sin procesar.</span>
+                </section>
 
-    <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-        <input type="file" id="invoice-upload" accept="image/*" capture="environment" style="display: none;">
-        <button id="btn-scan-invoice" class="btn-primary" style="background: #7c3aed; padding: 10px 16px; border: none; border-radius: 6px; color: white; cursor: pointer; font-weight: 600;">
-            📷 Sacar Foto / Subir Factura
-        </button>
-        <span id="scan-status" style="font-size: 0.85rem; color: var(--text-secondary);">Ninguna factura procesada aún.</span>
-    </div>
-</div>
+            </div>
 
-    <!-- Listado de productos e Inventario Actual -->
-    <!-- Listado de productos e Inventario Actual -->
-    <section class="card">
-        <h2>Inventario Actual y Alertas</h2>
-        
-        <div class="search-container" style="margin-bottom: 15px;">
-            <input type="text" id="search-input" placeholder="🔍 Buscar producto por nombre o categoría..." style="width: 100%; padding: 10px; border: 1px solid var(--border-color, #cbd5e1); border-radius: 6px; font-size: 0.95rem;">
+            <!-- ➡️ COLUMNA DERECHA: Tablas de Inventario, Bebidas y Precios -->
+            <div class="main-content" style="display: flex; flex-direction: column; gap: 20px;">
+                
+                <!-- Tabla Inventario Actual -->
+                <section class="card">
+                    <h2>Inventario Actual</h2>
+                    <div class="search-container" style="margin-bottom: 12px;">
+                        <input type="text" id="search-input" placeholder="🔍 Buscar producto..." style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Categoría</th>
+                                    <th>Stock</th>
+                                    <th>Mínimo</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="product-list">
+                                <!-- Dinámico -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Tabla de Bebidas -->
+                <section class="card" style="border-top: 4px solid #3b82f6;">
+                    <h2 style="color: #1d4ed8; font-size: 1.2rem;">🥤 Control de Bebidas</h2>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Subcategoría</th>
+                                    <th>Stock</th>
+                                    <th style="text-align: right;">Precio</th>
+                                </tr>
+                            </thead>
+                            <tbody id="drinks-list">
+                                <!-- Dinámico -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Lista de Precios -->
+                <section class="card" style="border-top: 4px solid #059669;">
+                    <h2 style="color: #065f46; font-size: 1.2rem;">💵 Lista de Precios</h2>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th style="text-align: right;">Precio</th>
+                                </tr>
+                            </thead>
+                            <tbody id="price-list">
+                                <!-- Dinámico -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+            </div>
+
         </div>
-
-        <!-- Contenedor principal en dos columnas (Tabla a la izquierda, Panel de Alertas a la derecha) -->
-        <div class="inventory-layout">
-            
-            <!-- Columna Izquierda: Tabla de productos -->
-            <div class="table-container-wrapper">
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Producto</th>
-                                <th>Categoría</th>
-                                <th>Stock</th>
-                                <th>Mínimo</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="product-list">
-                            <!-- Los productos se cargan dinámicamente con JS -->
-                        </tbody>
-                    </table>
-                </div>
-
-
-                <!-- Botón para ordenar alfabéticamente -->
-                <div style="margin-top: 16px; display: flex; justify-content: flex-end;">
-                    <button id="btn-sort" class="btn-secondary">🔤 Ordenar Alfabéticamente (A-Z)</button>
-                </div>
-            </div>
-
-            <!-- Columna Derecha: Panel Lateral de Alertas -->
-            <div class="alerts-sidebar">
-                <h3>⚠️ Alertas de Reposición</h3>
-                <p class="alerts-subtitle">Productos críticos o próximos al mínimo.</p>
-                <div id="alerts-list" class="alerts-list">
-                    <!-- Las alertas se cargan dinámicamente con JS -->
-                </div>
-            </div>
-
-        </div>
-    </section>
-<!-- Sección / Pestaña de Lista de Precios para Clientes -->
-<section class="card" style="margin-top: 24px; border-top: 4px solid #10b981;">
-    <h2 style="color: #065f46;">💵 Lista de Precios al Público</h2>
-    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px;">
-        Vista simplificada de productos y precios actualizados.
-    </p>
-
-    <div class="table-responsive">
-        <table id="price-list-table">
-            <thead>
-                <tr>
-                    <th>Producto</th>
-                    <th style="text-align: right;">Precio</th>
-                </tr>
-            </thead>
-            <tbody id="price-list">
-                <!-- Se carga automáticamente desde el Excel -->
-            </tbody>
-        </table>
-    </div>
-</section>
-<!-- 🥤 SECCIÓN ESPECÍFICA DE BEBIDAS -->
-<section class="card" style="margin-top: 24px; border-top: 4px solid #3b82f6;">
-    <h2 style="color: #1d4ed8;">🥤 Control y Stock de Bebidas</h2>
-    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px;">
-        Clasificación exclusiva para bebidas (Alcohólicas, Sin alcohol, Jugos, Agua, etc.).
-    </p>
-
-    <div class="table-responsive">
-        <table>
-            <thead>
-                <tr>
-                    <th>Producto</th>
-                    <th>Subcategoría</th>
-                    <th>Stock</th>
-                    <th style="text-align: right;">Precio</th>
-                </tr>
-            </thead>
-            <tbody id="drinks-list">
-                <!-- Se carga automáticamente desde JS filtrando las bebidas -->
-            </tbody>
-        </table>
-    </div>
-</section>
-</main>
+    </main>
 
 <script src="app.js"></script>
 </body>
