@@ -88,6 +88,31 @@ function renderProducts() {
         }
     }
 
+    // --- RENDERIZAR TABLA DE PRODUCTOS CRÍTICOS EN LA TARJETA ---
+const criticalListContainer = document.getElementById('critical-products-list');
+if (criticalListContainer) {
+    criticalListContainer.innerHTML = '';
+
+    // Filtramos los productos en estado crítico (menor o igual al stock mínimo o margen de advertencia)
+    const criticalProducts = products.filter(p => Number(p.stock) <= Number(p.minStock || 5));
+
+    if (criticalProducts.length === 0) {
+        criticalListContainer.innerHTML = `<tr><td colspan="3" style="text-align: center; color: #059669; font-weight: 600; padding: 10px;">¡Excelente! No hay stock crítico.</td></tr>`;
+    } else {
+        criticalProducts.forEach(product => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><strong>${product.name}</strong><br><span style="font-size: 0.75rem; color: #64748b;">Mín: ${product.minStock || 5}</span></td>
+                <td style="color: #dc2626; font-weight: bold;">${product.stock} un.</td>
+                <td style="text-align: right;">
+                    <a href="grafico-producto.html?nombre=${encodeURIComponent(product.name)}" target="_blank" style="padding: 4px 8px; font-size: 0.75rem; text-decoration: none; border-radius: 4px; background: #fee2e2; color: #991b1b; font-weight: 600;" title="Ver Gráfico">📈 Gráfico</a>
+                </td>
+            `;
+            criticalListContainer.appendChild(row);
+        });
+    }
+}
+
     // Renderizar tabla principal
     if (displayedNormalProducts.length === 0) {
         productList.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #64748b;">No hay productos óptimos para mostrar.</td></tr>`;
