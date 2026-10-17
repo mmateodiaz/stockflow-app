@@ -1,34 +1,45 @@
-# 📦 StockFlow
+# 📦 StockFlow — Sistema Web de Control de Inventario y Negocios
 
-**StockFlow** es una aplicacion web ligera y moderna disenada para el control eficiente de inventarios en pequeños negocios o emprendimientos. Permite registrar productos, gestionar entradas/salidas de stock y visualizar alertas automaticas cuando un articulo se encuentra en nivel critico.
+> Aplicación web moderna y ágil diseñada para optimizar la gestión de inventarios, control de stock crítico y análisis de rotación de productos en pequeños y medianos comercios.
 
-🔗 **Link en vivo:** [Ver aplicacion en produccion](https://stockflow-lj9jusor1-diaz-b075.vercel.app) 
-
----
-
-## 🚀 Caracteristicas Principales
-
-* **CRUD Completo:** Permite registrar nuevos productos con sus respectivas categorias y eliminar registros obsoletos.
-* **Control de Stock Dinamico:** Visualizacion clara de stock actual frente al stock minimo configurado.
-* **Alertas Visuales:** Las filas de la tabla se marcan automaticamente en color rojo cuando el inventario esta por debajo del limite seguro (Stock Critico).
-* **Persistencia de Datos:** Utiliza `localStorage` del navegador para que los datos no se pierdan al cerrar o recargar la pestaña.
+[![Desplegado en Vercel](https://img.shields.io/badge/Despliegue-Vercel-black?style=flat&logo=vercel)](https://stockflow-app-smoky.vercel.app/)
+[![Estado](https://img.shields.io/badge/Estado-Completado-success?style=flat)]()
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## 🚀 Características Principales
 
-* **HTML5:** Estructura semantica de la interfaz.
-* **CSS3:** Estilos personalizados, diseño limpio y adaptable (Responsive Design) mediante variables CSS.
-* **JavaScript (Vanilla):** Logica de negocio, manipulacion del DOM y gestion del almacenamiento local.
-* **Git y GitHub:** Control de versiones y repositorio de codigo fuente.
-* **Vercel:** Despliegue e infraestructura en la nube.
+* **Diseño Dashboard (2 Columnas):** Interfaz optimizada mediante CSS Grid para separar los controles de carga de la visualización de datos, evitando desplazamientos excesivos.
+* **Gestión Integral de Productos (CRUD):** Alta, modificación, control de stock en tiempo real y eliminación de registros.
+* **Sección Exclusiva de Bebidas:** Módulo dedicado con filtros y categorías especiales para el control de bebidas y artículos relacionados.
+* **Sistema de Alertas y Stock Crítico:** Identificación visual automática de productos por debajo del stock mínimo.
+* **Reportes Multipestaña Independientes:** Vistas dedicadas basadas en parámetros por URL (`?tipo=inventario`, `?tipo=bebidas`, `?tipo=faltantes`) que leen los datos desde el almacenamiento local.
+* **Análisis Gráfico de Rendimiento:** Integración con **Chart.js** para visualizar el historial y la rotación comercial de cada producto de forma individual.
+* **Buscador y Filtros Avanzados:** Filtrado dinámico por texto (nombre/categoría) y selectores rápidos por categoría o estado crítico.
+* **Persistencia de Datos:** Utiliza `localStorage` para garantizar que la información no se pierda al recargar la página.
 
 ---
 
-## 💻 Instalacion y Ejecucion Local
+## 🛠️ Tecnologías Utilizadas
 
-Si queres clonar y probar este proyecto en tu propia computadora, segui estos pasos:
+* **Frontend:** HTML5, CSS3 (CSS Grid, Flexbox, Variables CSS).
+* **Lógica y Dinamismo:** JavaScript Vanilla (ES6+).
+* **Librerías Externas:** Chart.js (para gráficos interactivos de rendimiento).
+* **Control de Versiones y Despliegue:** Git, GitHub y Vercel.
+
+---
+
+## 📱 Demostración en Vivo
+
+Podés probar la aplicación funcionando directamente desde la web en el siguiente enlace:
+👉 **[Ver aplicación en producción](https://stockflow-app-smoky.vercel.app/)**
+
+---
+
+## 💻 Instalación y Ejecución Local
+
+Si deseas clonar y probar este proyecto en tu computadora, sigue estos pasos:
 
 1. Clona el repositorio:
    ```bash
-   git clone https://github.com/mmateodiaz/stockflow-app.git
+   git clone [https://github.com/mmateodiaz/stockflow-app.git](https://github.com/mmateodiaz/stockflow-app.git)
