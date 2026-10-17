@@ -28,7 +28,7 @@
 }
 
 body {
-    background-color: #77797a; /* Un gris clarito moderno y elegante */
+    background-color: #6e787e; /* Un gris clarito moderno y elegante */
     color: var(--text-main, #1e293b);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;

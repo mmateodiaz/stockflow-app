@@ -94,9 +94,17 @@
                 <!-- Tabla Inventario Actual -->
                 <section class="card">
                     <h2>Inventario Actual</h2>
-                    <div class="search-container" style="margin-bottom: 12px;">
-                        <input type="text" id="search-input" placeholder="🔍 Buscar producto..." style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
-                    </div>
+                   <!-- 🔍 BUSCADOR Y FILTROS AVANZADOS -->
+    <div class="search-container" style="display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
+        <input type="text" id="search-input" placeholder="🔍 Buscar producto..." style="flex: 1; min-width: 180px; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+        
+        <select id="filter-select" style="padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; background: white; cursor: pointer; font-size: 0.9rem;">
+            <option value="todos">📂 Todas las categorías</option>
+            <option value="criticos">⚠️ Solo Stock Crítico</option>
+            <option value="almacen">📦 Almacén</option>
+            <option value="bebidas">🥤 Bebidas</option>
+        </select>
+    </div>
                     <div class="table-responsive">
                         <table>
                             <thead>

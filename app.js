@@ -38,7 +38,29 @@ function renderProducts() {
     const alertsList = document.getElementById('alerts-list');
     if (alertsList) alertsList.innerHTML = ''; 
 
+    const filterSelect = document.getElementById('filter-select');
     const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    const filterValue = filterSelect ? filterSelect.value : 'todos';
+
+    // Seleccionamos la lista base según el filtro del menú desplegable
+    let displayedNormalProducts = [...products];
+
+    if (filterValue === 'criticos') {
+        displayedNormalProducts = products.filter(p => Number(p.stock) <= Number(p.minStock || 5));
+    } else if (filterValue === 'almacen') {
+        displayedNormalProducts = products.filter(p => (p.category || '').toLowerCase().includes('almacén') || (p.category || '').toLowerCase().includes('almacen'));
+    } else if (filterValue === 'bebidas') {
+        displayedNormalProducts = products.filter(p => {
+            const cat = (p.category || '').toLowerCase();
+            return cat.includes('bebida') || cat.includes('alcohol') || cat.includes('agua') || cat.includes('gaseosa') || cat.includes('vino') || cat.includes('cerveza');
+        });
+    }
+
+    // Luego filtramos por lo que el usuario escriba en el buscador de texto
+    displayedNormalProducts = displayedNormalProducts.filter(product => 
+        product.name.toLowerCase().includes(searchTerm) || 
+        (product.category || '').toLowerCase().includes(searchTerm)
+    );
 
     // Separamos productos en advertencia/crítico vs normales
     const warningProducts = [];
@@ -53,10 +75,7 @@ function renderProducts() {
         }
     });
 
-    let displayedNormalProducts = normalProducts.filter(product => 
-        product.name.toLowerCase().includes(searchTerm) || 
-        product.category.toLowerCase().includes(searchTerm)
-    );
+    
 
     if (isSorted) {
         displayedNormalProducts.sort((a, b) => a.name.localeCompare(b.name));
